@@ -1,0 +1,158 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Changer</title>
+  <style>
+    body {
+      font-family: cursive;
+      text-align: center;
+      margin-top: 6%;
+      background-color: #141818;
+    }
+    #imageloc{ position: center;
+                height:60%;
+                width:25%; border-radius: 50%; 
+    }
+
+    @keyframes rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    .boxx{background-color: rgb(68, 60, 60);
+        height:7%; width:50%;
+        position: absolute; left:25%; top:80%; border-radius: 20px;display: flex; 
+      justify-content: center; 
+      align-items: center;
+    }
+    .title{position: absolute; left:25%; color: rgb(170, 160, 160); font-size: x-large; font-weight: bold;}
+
+    button{position: relative;}
+    audio{display:none}
+    .shuffleb{position: absolute;
+    left: 3%; background-color: rgb(68, 60, 60); border: none;}
+    .previous{position: absolute;
+    left: 38%;background-color: rgb(68, 60, 60); border: none; }
+  
+    .plapau{position: absolute;
+      left: 49%;background-color: rgb(68, 60, 60); border: none;}
+    .next{position: absolute;
+    left: 59%;background-color: rgb(68, 60, 60); border: none;}
+    .qtot{position:absolute;
+    top:15%;right:3%;height:50%;width:20%;background-color: rgb(56, 54, 54); border-radius: 2rem;}
+    .qhead{height:10%; background-color: rgb(68, 60, 60); border-top-left-radius: 3rem; border-top-right-radius: 3rem; display: flex; justify-content: center; align-items: center;}
+    .queue{font-size: 0.9rem; font-family: cursive;}
+  </style>
+</head>
+<body>
+  <div class="justbox">
+    <img id="imageloc" src="loki.png"><br><br>
+  </div>
+  <div class="boxx">
+    <button onclick="shuffle()" class="shuffleb"><img src="shuffle.png" height="20rem" width="20rem" id="shuimg"></button>
+    <button onclick="previous()" class="previous"> <img src="back.png" height="20rem" width="20rem"></button>
+    <button onclick="pp()" class="plapau"><img src="play.png" height="20rem" width="20rem" id="playpause"></button>
+    <button onclick="next()" class="next"><img src="next.png" height="20rem" width="20rem"></button>
+  </div>
+  <div>
+    <audio src="[iSongs.info] 06 - Dammunte Pattukora.mp3" controls="hidden" id="mplayer" preload="auto"></audio>
+  </div>
+  <br>
+  <div>
+    <p id="title" class="title"></p>
+  </div>
+  <div class="qtot">
+    <div class="qhead">Queue</div>
+    <div class="queue" id="que"></div>
+  </div>
+
+<script>
+  function shuf(array){ return array.sort(() => Math.random() - 0.5); }
+
+  const images = ["loki.png", "random.png"];
+  let songs = [
+    "[iSongs.info] 06 - Dammunte Pattukora.mp3",
+    "[iSongs.info] 04 - Peelings.mp3",
+    "[iSongs.info] 04 - NaaNaa Hyraanaa.mp3",
+    "[iSongs.info] 01 - Godari Gattu.mp3"
+  ];
+
+  const a = [
+    "[iSongs.info] 06 - Dammunte Pattukora.mp3",
+    "[iSongs.info] 04 - Peelings.mp3",
+    "[iSongs.info] 04 - NaaNaa Hyraanaa.mp3",
+    "[iSongs.info] 01 - Godari Gattu.mp3"
+  ];
+
+  let shuffleval = "false";
+  let songindex = 0;
+  let currentIndex = 0;
+
+  function shuffle() {
+    if (shuffleval === "false") {
+      shuffleval = "true";
+      songs = shuf(songs);
+      document.getElementById("shuimg").src = "shuffleon.png";
+    } else {
+      shuffleval = "false";
+      songs = a;
+      document.getElementById("shuimg").src = "shuffle.png";
+    }
+    songindex = 0;
+    document.getElementById("mplayer").src = songs[songindex];
+    updateQueue();
+  }
+
+  function pp() {
+    if (document.getElementById("mplayer").paused) {
+      document.getElementById("mplayer").play();
+      document.getElementById("imageloc").style.animation = "rotate 5s linear infinite";
+      document.getElementById("title").textContent = songs[songindex];
+      document.getElementById("playpause").src = "pause.png";
+    } else {
+      document.getElementById("mplayer").pause();
+      document.getElementById("imageloc").style.animation = "none";
+      document.getElementById("title").textContent = songs[songindex];
+      document.getElementById("playpause").src = "play.png";
+    }
+    updateQueue();
+  }
+
+  function next() {
+    currentIndex = (currentIndex + 1) % images.length;
+    songindex = (songindex + 1) % songs.length;
+    updatePlayer();
+  }
+
+  function previous() {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    songindex = (songindex - 1 + songs.length) % songs.length;
+    updatePlayer();
+  }
+
+  function updatePlayer() {
+    document.getElementById("mplayer").src = songs[songindex];
+    document.getElementById("mplayer").play();
+    document.getElementById("title").textContent = songs[songindex];
+    document.getElementById("imageloc").src = images[currentIndex];
+    updateQueue();
+  }
+
+  function updateQueue() {
+    let queue = '';
+    for (let i = songindex; i < songindex + 4; i++) {
+      queue += songs[i % songs.length] + "<br>";
+    }
+    document.getElementById("que").innerHTML = queue;
+  }
+
+  document.getElementById("mplayer").addEventListener("ended", function() {
+    next();
+  });
+</script>
+</body>
+</html>
